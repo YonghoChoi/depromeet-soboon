@@ -88,7 +88,7 @@ module "elasticstack" {
   project = "soboon"
   public_subnet_ids = module.vpc.public_subnets
   private_subnet_ids = module.vpc.private_subnets
-  es_sg_ids = [module.soboon-sg.this_security_group_id]
+  es_sg_ids = [module.elasticstack-sg.this_security_group_id]
   ami_id = data.aws_ami.ubuntu.id
   ec2_password = "ubuntu"
   azs = local.azs
