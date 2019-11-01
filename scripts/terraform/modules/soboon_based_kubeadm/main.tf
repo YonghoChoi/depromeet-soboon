@@ -1,7 +1,7 @@
 resource "aws_spot_instance_request" "this" {
-  ami                  = data.aws_ami.ubuntu.id
+  ami                  = var.soboon_ami_id
   key_name             = var.key_pair
-  instance_type        = var.instance_type
+  instance_type        = var.soboon_web_instance_type
   iam_instance_profile = var.iam_instance_profile_name
   vpc_security_group_ids = var.security_group_ids
 
@@ -24,13 +24,13 @@ resource "aws_spot_instance_request" "this" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    password    = data.aws_ssm_parameter.ec2_password.value
+    password    = var.password
     host        = self.public_ip
   }
 
   provisioner "file" {
     # Develop과 동일한 구성으로 Kubernetes 클러스터를 설정하기 때문에 develop 디렉토리 참조
-    source      = "${path.module}/../../kubernetes"
+    source      = "${path.module}/../../../kubernetes"
     destination = "~/k8s"
   }
 }
@@ -40,7 +40,7 @@ resource "null_resource" "run_coomand" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      password    = data.aws_ssm_parameter.ec2_password.value
+      password    = var.password
       host        = aws_spot_instance_request.this.public_ip
     }
 
@@ -52,7 +52,7 @@ resource "null_resource" "run_coomand" {
       "cd ~/k8s",
       "dos2unix *",
       "chmod +x *.sh",
-      "./create.sh ${var.env}",
+      "./create.sh ${var.environment}",
       "sleep 10",
     ]
   }
@@ -104,7 +104,7 @@ kubectl taint nodes --all node-role.kubernetes.io/master-
 echo 'source <(kubectl completion bash)' >> /etc/profile
 
 # set password
-echo "ubuntu:${data.aws_ssm_parameter.ec2_password.value}" | chpasswd
+echo "ubuntu:${var.password}" | chpasswd
 sed -i "/^[^#]*PasswordAuthentication[[:space:]]no/c\PasswordAuthentication yes" /etc/ssh/sshd_config
 service sshd restart
 USERDATA

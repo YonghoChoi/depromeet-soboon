@@ -1,13 +1,16 @@
 variable "name" {
     type = "string"
-    default = "demo_k8s"
 }
 
 variable "key_pair" {
     type = "string"
 }
 
-variable "instance_type" {
+variable "es_instance_type" {
+    type = "string"
+}
+
+variable "soboon_web_instance_type" {
     type = "string"
 }
 
@@ -53,12 +56,20 @@ variable "subnet_ids" {
     type = "list"
 }
 
-variable "ssh_password_parameter_name" {
+variable "password" {
     type = "string"
-    default = "ec2-ubuntu-password"
+    default = "ubuntu"
 }
 
-variable "env" {
+variable "environment" {
+    type = "string"
+}
+
+variable "es_ami_id" {
+    type = "string"
+}
+
+variable "soboon_ami_id" {
     type = "string"
 }
 

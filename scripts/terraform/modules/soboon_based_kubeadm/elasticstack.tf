@@ -1,7 +1,7 @@
 resource "aws_spot_instance_request" "elasticstack" {
-  ami                  = data.aws_ami.ubuntu.id
+  ami                  = var.es_ami_id
   key_name             = var.key_pair
-  instance_type        = var.instance_type
+  instance_type        = var.es_instance_type
   vpc_security_group_ids = var.security_group_ids
 
   spot_price = var.spot_price
@@ -23,12 +23,12 @@ resource "aws_spot_instance_request" "elasticstack" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    password    = data.aws_ssm_parameter.ec2_password.value
+    password    = var.password
     host        = self.public_ip
   }
 
   provisioner "file" {
-    source      = "${path.module}/../../docker/compose/elasticstack"
+    source      = "${path.module}/../../../docker/compose/elasticstack"
     destination = "~/elasticstack"
   }
 
@@ -61,7 +61,7 @@ chmod +x /usr/local/bin/docker-compose
 ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
 # set password
-echo "ubuntu:${data.aws_ssm_parameter.ec2_password.value}" | chpasswd
+echo "ubuntu:${var.password}" | chpasswd
 sed -i "/^[^#]*PasswordAuthentication[[:space:]]no/c\PasswordAuthentication yes" /etc/ssh/sshd_config
 service sshd restart
 USERDATA
