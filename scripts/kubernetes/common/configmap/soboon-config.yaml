@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: soboon-config
+  name: soboon-web-config
 data:
   config.yml: |-
     test

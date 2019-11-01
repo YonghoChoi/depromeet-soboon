@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: soboon
+  name: soboon-web
   labels:
     project: "soboon"
 spec:
@@ -12,15 +12,16 @@ spec:
         app: "soboon-web"
         project: "soboon"
     spec:
-      - name: init-mysql
-          image: busybox:1.28
-          command: ['sh', '-c', 'until nc -z -w5 mysql.default.svc.cluster.local 3306; do echo waiting for mysql; sleep 2; done;']
+#      initContainers:
+#        - name: init-mysql
+#          image: busybox:1.28
+#          command: ['sh', '-c', 'until nc -z -w5 mysql.default.svc.cluster.local 3306; do echo waiting for mysql; sleep 2; done;']
       containers:
         - name: soboon-web
-          image: "nginx"
+          image: "djangofluent/demo.django-fluent.org"
           imagePullPolicy: Always
           ports:
-            - containerPort: 80
+            - containerPort: 8080
               name: soboon-web
           volumeMounts:
             - mountPath: /var/log
@@ -28,23 +29,23 @@ spec:
             - mountPath: /opt/soboon-web/config.yaml
               name: soboon-web-config
               subPath: config.yml
-        - name: filebeat
-          image: "docker.elastic.co/beats/filebeat:7.2.1"
-          imagePullPolicy: Always
-          env:
-            - name: APP
-              value: "soboon-web"
-            - name: ELASTICSEARCH_END_POINT
-              valueFrom:
-                configMapKeyRef:
-                  name: elasticsearch-config
-                  key: endpoint
-          volumeMounts:
-            - mountPath: /var/log
-              name: varlog
-            - mountPath: /usr/share/filebeat/filebeat.yml
-              name: filebeat-config
-              subPath: filebeat.yml
+#        - name: filebeat
+#          image: "docker.elastic.co/beats/filebeat:7.2.1"
+#          imagePullPolicy: Always
+#          env:
+#            - name: APP
+#              value: "soboon-web"
+#            - name: ELASTICSEARCH_END_POINT
+#              valueFrom:
+#                configMapKeyRef:
+#                  name: elasticsearch-config
+#                  key: endpoint
+#          volumeMounts:
+#            - mountPath: /var/log
+#              name: varlog
+#            - mountPath: /usr/share/filebeat/filebeat.yml
+#              name: filebeat-config
+#              subPath: filebeat.yml
       volumes:
         - name: varlog
           emptyDir: {}

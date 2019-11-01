@@ -1,0 +1,16 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: "soboon-web"
+  labels:
+    project: "soboon"
+spec:
+  selector:
+    app: "soboon-web"
+  ports:
+    - name: "http"
+      protocol: "TCP"
+      port: 8080
+      targetPort: 8080
+      nodePort: 30001
+  type: NodePort

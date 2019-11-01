@@ -79,22 +79,19 @@ chmod +x /usr/local/bin/docker-compose
 ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
 # kubernetes install
+USER_HOME=/home/ubuntu
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 sh -c 'echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" >> /etc/apt/sources.list.d/kubernetes.list'
 apt-get update
 apt-get install -y kubelet kubeadm kubectl
 apt-mark hold kubelet kubeadm kubectl
-kubeadm init
-
-mkdir -p $HOME/.kube
-cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-chown $(id -u):$(id -g) $HOME/.kube/config
-echo "export KUBECONFIG=$HOME/.kube/config" >> ~/.bashrc
-source ~/.bashrc
+kubeadm init > $USER_HOME/kubeadm_init.log
 
 export USER_HOME=/home/ubuntu
 mkdir -p $USER_HOME/.kube
+mkdir -p /.kube
 cp -i /etc/kubernetes/admin.conf $USER_HOME/.kube/config
+cp -i /etc/kubernetes/admin.conf /.kube/config
 chown -R ubuntu:ubuntu $USER_HOME/.kube
 echo "export KUBECONFIG=$USER_HOME/.kube/config" >> $USER_HOME/.bashrc
 source ~/.bashrc
