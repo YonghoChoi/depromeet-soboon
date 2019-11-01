@@ -4,7 +4,7 @@ APP_ENV=$1
 
 # must create configmap first
 #dirs=(./common/configmap ./$APP_ENV/configmap ./common/pv ./$APP_ENV/pv ./common/deployment ./common/service ./common/job ./$APP_ENV/service)
-dirs=(./common/configmap ./common/deployment)
+dirs=(./common/configmap ./common/pv ./common/deployment ./common/service)
 for dir in "${dirs[@]}"
 do
     cd $dir
