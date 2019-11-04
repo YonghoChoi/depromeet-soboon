@@ -2,8 +2,8 @@
 BASE_DIR=`pwd`
 APP_ENV=$1
 
-#dirs=(./$APP_ENV/service ./common/configmap ./$APP_ENV/configmap ./common/deployment ./common/service ./common/job ./common/pv ./$APP_ENV/pv)
-dirs=(./common/configmap ./common/deployment ./common/pv ./common/service)
+#dirs=(./$APP_ENV/service ./configmap ./$APP_ENV/configmap ./deployment ./service ./job ./pv ./$APP_ENV/pv)
+dirs=(./configmap ./deployment ./pv ./service)
 for dir in "${dirs[@]}"
 do
     cd $dir

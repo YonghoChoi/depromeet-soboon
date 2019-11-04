@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: soboon-web
@@ -6,6 +6,9 @@ metadata:
     project: "soboon"
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: "soboon-web"
   template:
     metadata:
       labels:
@@ -29,23 +32,23 @@ spec:
             - mountPath: /opt/soboon-web/config.yaml
               name: soboon-web-config
               subPath: config.yml
-#        - name: filebeat
-#          image: "docker.elastic.co/beats/filebeat:7.2.1"
-#          imagePullPolicy: Always
-#          env:
-#            - name: APP
-#              value: "soboon-web"
-#            - name: ELASTICSEARCH_END_POINT
-#              valueFrom:
-#                configMapKeyRef:
-#                  name: elasticsearch-config
-#                  key: endpoint
-#          volumeMounts:
-#            - mountPath: /var/log
-#              name: varlog
-#            - mountPath: /usr/share/filebeat/filebeat.yml
-#              name: filebeat-config
-#              subPath: filebeat.yml
+        - name: filebeat
+          image: "docker.elastic.co/beats/filebeat:7.2.1"
+          imagePullPolicy: Always
+          env:
+            - name: APP
+              value: "soboon-web"
+            - name: ELASTICSEARCH_END_POINT
+              valueFrom:
+                configMapKeyRef:
+                  name: elasticsearch-config
+                  key: endpoint
+          volumeMounts:
+            - mountPath: /var/log
+              name: varlog
+            - mountPath: /usr/share/filebeat/filebeat.yml
+              name: filebeat-config
+              subPath: filebeat.yml
       volumes:
         - name: varlog
           emptyDir: {}

@@ -33,9 +33,14 @@ resource "aws_spot_instance_request" "this" {
     source      = "${path.module}/../../../kubernetes"
     destination = "~/k8s"
   }
+
+  provisioner "file" {
+    source      = "${path.module}/../../../docker/compose/nginx"
+    destination = "~/nginx"
+  }
 }
 
-resource "null_resource" "run_coomand" {
+resource "null_resource" "run_command" {
   provisioner "remote-exec" {
     connection {
       type        = "ssh"
@@ -47,17 +52,19 @@ resource "null_resource" "run_coomand" {
     inline = [
       // filebeat로 수집한 데이터 전달을 위해 elasticsearch endpoint를 configmap에 등록
       "kubectl create configmap elasticsearch-config --from-literal endpoint=${aws_spot_instance_request.elasticstack.private_ip}:9200",
-
       // kubernetes 리소스 생성
       "cd ~/k8s",
       "dos2unix *",
       "chmod +x *.sh",
       "./create.sh ${var.environment}",
+      "cd ~/nginx",
+      "echo '${local.nginx_conf}' | tee ~/nginx/dev.conf",
+      "docker-compose up -d",
       "sleep 10",
     ]
   }
 
-  depends_on = ["aws_spot_instance_request.this"]
+  depends_on = ["aws_spot_instance_request.elasticstack", "aws_spot_instance_request.this"]
 }
 
 locals {
@@ -105,4 +112,30 @@ echo "ubuntu:${var.password}" | chpasswd
 sed -i "/^[^#]*PasswordAuthentication[[:space:]]no/c\PasswordAuthentication yes" /etc/ssh/sshd_config
 service sshd restart
 USERDATA
+
+  nginx_conf = <<NGINXCONF
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name _;
+    client_max_body_size 10M;
+    index index.html;
+
+    location / {
+        proxy_set_header X-Real-IP  $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header Host $host;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_pass http://web-server/;
+        proxy_http_version 1.1;
+        proxy_redirect off;
+    }
+}
+
+upstream web-server {
+    server ${aws_spot_instance_request.this.private_ip}:30001;
+    keepalive 1024;
+}
+NGINXCONF
 }

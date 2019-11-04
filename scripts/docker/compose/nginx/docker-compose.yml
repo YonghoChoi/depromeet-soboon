@@ -1,0 +1,10 @@
+version: '2.1'
+
+services:
+  soboon-proxy:
+    image: nginx
+    container_name: soboon_proxy
+    volumes:
+      - ./dev.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - '80:30001'

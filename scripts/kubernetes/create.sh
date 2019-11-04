@@ -3,8 +3,8 @@ BASE_DIR=`pwd`
 APP_ENV=$1
 
 # must create configmap first
-#dirs=(./common/configmap ./$APP_ENV/configmap ./common/pv ./$APP_ENV/pv ./common/deployment ./common/service ./common/job ./$APP_ENV/service)
-dirs=(./common/configmap ./common/pv ./common/deployment ./common/service)
+#dirs=(./configmap ./$APP_ENV/configmap ./pv ./$APP_ENV/pv ./deployment ./service ./job ./$APP_ENV/service)
+dirs=(./configmap ./pv ./deployment ./service)
 for dir in "${dirs[@]}"
 do
     cd $dir

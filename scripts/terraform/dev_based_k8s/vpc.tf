@@ -27,6 +27,23 @@ module "soboon-sg" {
     {
       rule = "ssh-tcp"
       cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      rule = "http-80-tcp"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      from_port = 30001
+      to_port = 30001
+      protocol = "tcp"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  ]
+
+  ingress_with_source_security_group_id = [
+    {
+      rule = "all-all"
+      source_security_group_id = module.soboon-sg.this_security_group_id
     }
   ]
 
