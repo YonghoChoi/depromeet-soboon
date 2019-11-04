@@ -3,9 +3,13 @@ jobs:
   build:
     docker:
       - image: circleci/golang:1.12
+    working_directory: /go/src/soboon
 
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+
       - run:
           name: alert api build
           command: |
@@ -15,13 +19,18 @@ jobs:
             go mod tidy
             cd cmd/alertapi
             go build -o ./bin/alert-api
-            cd bin
-            cat <<EOT > Dockerfile
-            FROM debian:jessie
-            RUN mkdir -p /opt/soboon
-            COPY ./alert-api /opt/soboon/alert-api
-            RUN chmod +x /opt/soboon/alert-api
-            CMD ["/opt/soboon/alert-api"]
-            EOT
-            docker build -t soboon-alert-api .
-            docker images
+            pwd
+
+      - run: |
+          cd /go/src/soboon/cmd/alertapi/bin
+          cat <<EOT > Dockerfile
+          FROM debian:jessie
+          RUN mkdir -p /opt/soboon
+          COPY ./alert-api /opt/soboon/alert-api
+          RUN chmod +x /opt/soboon/alert-api
+          CMD ["/opt/soboon/alert-api"]
+          EOT
+          ls -l
+          docker build -t yonghochoi/soboon-alert-api .
+          docker images
+          docker push yonghochoi/soboon-alert-api
