@@ -20,6 +20,8 @@ jobs:
             apt-get update && \
             apt-get install -y docker.io && \
             docker --version
+            ln -s /etc/systemd/system/sockets.target.wants/docker.socket /var/run/docker.sock
+
             cd ./bin
             cat <<EOT > Dockerfile
             FROM debian:jessie
