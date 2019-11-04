@@ -3,12 +3,11 @@ jobs:
   build:
     docker:
       - image: circleci/golang:1.12
-    working_directory: /opt
 
     steps:
-      - checkout # check out source code to working directory
+      - checkout
       - run:
-          name: Waiting for Postgres to be ready
+          name: alert api build
           command: |
             export GO111MODULE=on
             export GOARCH=amd64
