@@ -3,17 +3,16 @@ jobs:
   build:
     docker:
       - image: circleci/golang:1.12
-    working_directory: /go/src/github.com/CircleCI-Public/circleci-demo-go
-
-    environment:
-      GOARCH: amd64
-      GOOS: linux
+    working_directory: /opt
 
     steps:
       - checkout # check out source code to working directory
       - run:
           name: Waiting for Postgres to be ready
           command: |
+            export GO111MODULE=on
+            export GOARCH=amd64
+            export GOOS=linux
             go mod tidy
             cd cmd/alertapi
             go build -o ./bin/alert-api
