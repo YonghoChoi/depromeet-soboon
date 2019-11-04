@@ -26,12 +26,16 @@ func TestFCMSend(t *testing.T) {
 	registrationToken := "<클라이언트의 token 입력>"
 
 	// See documentation on defining a message payload.
+	// topic에 구독하고 있는 구독자들한테 메시지 전송
+	// 참고 : https://firebase.google.com/docs/cloud-messaging/android/send-multiple?authuser=0
+	topic := "topic message"
 	message := &messaging.Message{
 		Data: map[string]string{
 			"score": "850",
 			"time":  "2:45",
 		},
 		Token: registrationToken,
+		Topic: topic,
 	}
 
 	// Send a message to the device corresponding to the provided
