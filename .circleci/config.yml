@@ -19,22 +19,26 @@ jobs:
       - store_artifacts:
           path: /tmp/alert-api
           destination: alert-api
-#            ls -l
-#            apt-get update && \
-#            apt-get install -y docker.io && \
-#            docker --version
-#            ln -s /etc/systemd/system/sockets.target.wants/docker.socket /var/run/docker.sock
-#
-#            cd ./bin
-#            cat <<EOT > Dockerfile
-#            FROM debian:jessie
-#            RUN mkdir -p /opt/soboon
-#            COPY ./alert-api /opt/soboon/alert-api
-#            RUN chmod +x /opt/soboon/alert-api
-#            CMD ["/opt/soboon/alert-api"]
-#            EOT
-#            ls -l
-#            docker build -t yonghochoi/soboon-alert-api .
-#            docker images
-#            docker push yonghochoi/soboon-alert-api
+  deploy:
+    docker:
+      - image: docker:19.03
 
+    steps:
+      - run:
+          name: image build and push
+          command: |
+            curl https://circleci.com/api/v1.1/project/github/yonghochoi/depromeet-soboon/latest/artifacts?circle-token=$CIRCLE_TOKEN \
+              | grep -o 'https://[^"]*' \
+              | wget -v -i -
+            chmod +x alert-api
+            cat <<EOT > Dockerfile
+            FROM debian:jessie
+            RUN mkdir -p /opt/soboon
+            COPY ./alert-api /opt/soboon/alert-api
+            RUN chmod +x /opt/soboon/alert-api
+            CMD ["/opt/soboon/alert-api"]
+            EOT
+            ls -l
+            docker build -t yonghochoi/soboon-alert-api .
+            docker images
+            docker push yonghochoi/soboon-alert-api
