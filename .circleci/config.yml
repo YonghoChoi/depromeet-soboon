@@ -23,25 +23,17 @@ jobs:
             apt-get update && \
             apt-get install -y docker.io && \
             docker --version
-#      - run:
-#          name: Install Docker client
-#          command: |
-#            set -x
-#            VER="17.03.0-ce"
-#            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
-#            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
-#            mv /tmp/docker/* /usr/bin
-#
-#      - run: |
-#          cd /go/src/soboon/cmd/alertapi/bin
-#          cat <<EOT > Dockerfile
-#          FROM debian:jessie
-#          RUN mkdir -p /opt/soboon
-#          COPY ./alert-api /opt/soboon/alert-api
-#          RUN chmod +x /opt/soboon/alert-api
-#          CMD ["/opt/soboon/alert-api"]
-#          EOT
-#          ls -l
-#          docker build -t yonghochoi/soboon-alert-api .
-#          docker images
-#          docker push yonghochoi/soboon-alert-api
+      - run: |
+          pwd
+          cd /root/project/cmd/alertapi/bin
+          cat <<EOT > Dockerfile
+          FROM debian:jessie
+          RUN mkdir -p /opt/soboon
+          COPY ./alert-api /opt/soboon/alert-api
+          RUN chmod +x /opt/soboon/alert-api
+          CMD ["/opt/soboon/alert-api"]
+          EOT
+          ls -l
+          docker build -t yonghochoi/soboon-alert-api .
+          docker images
+          docker push yonghochoi/soboon-alert-api
