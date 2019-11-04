@@ -17,23 +17,19 @@ jobs:
             cd cmd/alertapi
             go build -o ./bin/alert-api
             ls -l
-      - run:
-          name: Install docker
-          command: |
             apt-get update && \
             apt-get install -y docker.io && \
             docker --version
-      - run: |
-          pwd
-          cd /root/project/cmd/alertapi/bin
-          cat <<EOT > Dockerfile
-          FROM debian:jessie
-          RUN mkdir -p /opt/soboon
-          COPY ./alert-api /opt/soboon/alert-api
-          RUN chmod +x /opt/soboon/alert-api
-          CMD ["/opt/soboon/alert-api"]
-          EOT
-          ls -l
-          docker build -t yonghochoi/soboon-alert-api .
-          docker images
-          docker push yonghochoi/soboon-alert-api
+            cd ./bin
+            cat <<EOT > Dockerfile
+            FROM debian:jessie
+            RUN mkdir -p /opt/soboon
+            COPY ./alert-api /opt/soboon/alert-api
+            RUN chmod +x /opt/soboon/alert-api
+            CMD ["/opt/soboon/alert-api"]
+            EOT
+            ls -l
+            docker build -t yonghochoi/soboon-alert-api .
+            docker images
+            docker push yonghochoi/soboon-alert-api
+
