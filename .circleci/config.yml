@@ -42,3 +42,9 @@ jobs:
             docker build -t yonghochoi/soboon-alert-api .
             docker images
             docker push yonghochoi/soboon-alert-api
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy
