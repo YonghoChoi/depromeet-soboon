@@ -2,7 +2,7 @@ package fcm
 
 import "encoding/json"
 
-type Message interface {
+type IMessage interface {
 	GetSender() string
 	GetReceivers() []string
 	GetTopic() []string
@@ -10,35 +10,25 @@ type Message interface {
 	ToJson() (string, error)
 }
 
-type FCMMessage struct {
-	message   string
+type Message struct {
 	receivers []string
-	sender    string
 	topic     string
 	data      map[string]string
 }
 
-func (o *FCMMessage) GetSender() string {
-	return o.sender
-}
-
-func (o *FCMMessage) GetReceivers() []string {
+func (o *Message) GetReceivers() []string {
 	return o.receivers
 }
 
-func (o *FCMMessage) GetMessage() string {
-	return o.message
-}
-
-func (o *FCMMessage) GetTopic() string {
+func (o *Message) GetTopic() string {
 	return o.topic
 }
 
-func (o *FCMMessage) GetData() map[string]string {
+func (o *Message) GetData() map[string]string {
 	return o.data
 }
 
-func (o *FCMMessage) ToJson() (string, error) {
+func (o *Message) ToJson() (string, error) {
 	jsonBytes, err := json.Marshal(o)
 	if err != nil {
 		return "", err
