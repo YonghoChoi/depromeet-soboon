@@ -6,7 +6,6 @@ jobs:
     working_directory: /go/src/github.com/CircleCI-Public/circleci-demo-go
 
     environment:
-      GO111MODULE: on
       GOARCH: amd64
       GOOS: linux
 
