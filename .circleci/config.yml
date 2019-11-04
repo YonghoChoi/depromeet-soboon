@@ -30,9 +30,8 @@ jobs:
             apk add --update \
             curl \
             && rm -rf /var/cache/apk/*
-            curl https://circleci.com/api/v1.1/project/github/yonghochoi/depromeet-soboon/latest/artifacts?circle-token=$CIRCLE_TOKEN \
-              | grep -o 'https://[^"]*' \
-              | wget -v -i -
+            wget $(curl https://circleci.com/api/v1.1/project/github/yonghochoi/depromeet-soboon/latest/artifacts?circle-token=$CIRCLE_TOKEN \
+              | grep -o 'https://[^"]*')
             chmod +x alert-api
             cat <<EOT > Dockerfile
             FROM debian:jessie
