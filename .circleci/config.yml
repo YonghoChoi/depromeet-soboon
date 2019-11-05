@@ -39,6 +39,7 @@ jobs:
           docker build -t yonghochoi/soboon-alert-api .
           docker images
           docker push yonghochoi/soboon-alert-api
+          docker ps
 #  deploy:
 #    docker:
 #      - image: docker:19.03
