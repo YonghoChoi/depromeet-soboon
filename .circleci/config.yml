@@ -3,10 +3,9 @@ jobs:
   build:
     docker:
       - image: golang:1.12
+
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
       - run:
           name: alert api build
           command: |
@@ -17,18 +16,38 @@ jobs:
             go mod tidy
             cd cmd/alertapi
             go build -o /tmp/alert-api
-      - run: |
-          cd /tmp
-          chmod +x alert-api
-          cat <<EOT > Dockerfile
-          FROM debian:jessie
-          RUN mkdir -p /opt/soboon
-          COPY ./alert-api /opt/soboon/alert-api
-          RUN chmod +x /opt/soboon/alert-api
-          CMD ["/opt/soboon/alert-api"]
-          EOT
-          ls -l
-          docker build -t yonghochoi/soboon-alert-api .
-          docker images
-          docker push yonghochoi/soboon-alert-api
-          docker ps
+      - store_artifacts:
+          path: /tmp/alert-api
+          destination: alert-api
+  deploy:
+    docker:
+      - image: docker:19.03
+
+    steps:
+      - run:
+          name: image build and push
+          command: |
+            apk add --update \
+            curl \
+            && rm -rf /var/cache/apk/*
+            wget $(curl https://circleci.com/api/v1.1/project/github/yonghochoi/depromeet-soboon/latest/artifacts?circle-token=$CIRCLE_TOKEN | grep -o 'https://[^"]*')
+            chmod +x alert-api
+            cat <<EOT > Dockerfile
+            FROM debian:jessie
+            RUN mkdir -p /opt/soboon
+            COPY ./alert-api /opt/soboon/alert-api
+            RUN chmod +x /opt/soboon/alert-api
+            CMD ["/opt/soboon/alert-api"]
+            EOT
+            ls -l
+            docker build -t yonghochoi/soboon-alert-api .
+            docker images
+            docker push yonghochoi/soboon-alert-api
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build

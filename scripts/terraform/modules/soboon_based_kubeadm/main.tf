@@ -51,7 +51,7 @@ resource "null_resource" "run_command" {
 
     inline = [
       // filebeat로 수집한 데이터 전달을 위해 elasticsearch endpoint를 configmap에 등록
-      "kubectl create configmap elasticsearch-config --from-literal endpoint=${aws_spot_instance_request.elasticstack.private_ip}:9200",
+//      "kubectl create configmap elasticsearch-config --from-literal endpoint=${aws_spot_instance_request.elasticstack.private_ip}:9200",
       // kubernetes 리소스 생성
       "cd ~/k8s",
       "dos2unix *",
@@ -64,7 +64,8 @@ resource "null_resource" "run_command" {
     ]
   }
 
-  depends_on = ["aws_spot_instance_request.elasticstack", "aws_spot_instance_request.this"]
+  depends_on = ["aws_spot_instance_request.this"]
+//  depends_on = ["aws_spot_instance_request.elasticstack", "aws_spot_instance_request.this"]
 }
 
 locals {
