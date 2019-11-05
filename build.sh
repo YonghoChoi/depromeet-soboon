@@ -1,9 +1,9 @@
 #!/bin/sh
 
-GO111MODULE=on
-GOARCH=amd64
-GOOS=linux
-ROOT_PATH=$(pwd)
+export GO111MODULE=on
+export GOARCH=amd64
+export GOOS=linux
+export ROOT_PATH=$(pwd)
 rm -rf ./bin/*
 
 cd cmd/alertapi

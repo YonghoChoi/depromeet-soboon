@@ -34,7 +34,7 @@ module "soboon-sg" {
     },
     {
       from_port = 30001
-      to_port = 30001
+      to_port = 33000
       protocol = "tcp"
       cidr_blocks = "0.0.0.0/0"
     }

@@ -11,21 +11,21 @@ type IMessage interface {
 }
 
 type Message struct {
-	receivers []string
-	topic     string
-	data      map[string]string
+	Receivers []string          `json:"receivers"`
+	Topic     string            `json:"topic"`
+	Data      map[string]string `json:"data"`
 }
 
 func (o *Message) GetReceivers() []string {
-	return o.receivers
+	return o.Receivers
 }
 
 func (o *Message) GetTopic() string {
-	return o.topic
+	return o.Topic
 }
 
 func (o *Message) GetData() map[string]string {
-	return o.data
+	return o.Data
 }
 
 func (o *Message) ToJson() (string, error) {

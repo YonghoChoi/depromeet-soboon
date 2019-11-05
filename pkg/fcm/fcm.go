@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"google.golang.org/api/option"
 	"log"
+	"os"
 )
 
 var gSender *Sender
@@ -31,7 +32,11 @@ func (o *Sender) Send(message *messaging.Message) (string, error) {
 func getFCMClient() *Sender {
 	if gSender == nil {
 		ctx := context.Background()
-		app, err := firebase.NewApp(ctx, nil, option.WithCredentialsFile("./soboon-service-account.json"))
+		credentials := os.Getenv("FIREBASE_CREDENTIALS")
+		if credentials == "" {
+			credentials = "./soboon-service-account.json"
+		}
+		app, err := firebase.NewApp(ctx, nil, option.WithCredentialsFile(credentials))
 		if err != nil {
 			log.Fatalf(err.Error())
 		}

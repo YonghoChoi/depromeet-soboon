@@ -8,6 +8,18 @@ import (
 
 const Version = "0.0.1"
 
+type Response struct {
+	Result  string                 `json:"result"`
+	Message string                 `json:"message"`
+	Data    map[string]interface{} `json:"data"`
+}
+
+func NewResponse() *Response {
+	res := new(Response)
+	res.Data = make(map[string]interface{})
+	return res
+}
+
 func main() {
 	e := echo.New()
 	e.GET("/", func(c echo.Context) error {
@@ -25,13 +37,20 @@ func main() {
 
 func Send(c echo.Context) error {
 	msg := new(fcm.Message)
+	res := NewResponse()
+	res.Result = "200"
 	if err := c.Bind(msg); err != nil {
-		return err
+		res.Result = "500"
+		res.Message = err.Error()
+		return c.JSON(http.StatusOK, res)
 	}
 
 	if err := fcm.Send(msg); err != nil {
-		return err
+		res.Result = "500"
+		res.Message = err.Error()
+		return c.JSON(http.StatusOK, res)
 	}
 
-	return c.JSON(http.StatusOK, msg)
+	res.Data["message"] = msg
+	return c.JSON(http.StatusOK, res)
 }
