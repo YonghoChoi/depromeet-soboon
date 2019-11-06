@@ -15,50 +15,21 @@ spec:
         app: "soboon-web"
         project: "soboon"
     spec:
-#      initContainers:
-#        - name: init-mysql
-#          image: busybox:1.28
-#          command: ['sh', '-c', 'until nc -z -w5 mysql.default.svc.cluster.local 3306; do echo waiting for mysql; sleep 2; done;']
       containers:
         - name: soboon-web
-          image: "djangofluent/demo.django-fluent.org"
+          image: "yonghochoi/soboon-web"
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080
+            - containerPort: 80
               name: soboon-web
           volumeMounts:
-            - mountPath: /var/log
-              name: varlog
-            - mountPath: /opt/soboon-web/config.yaml
-              name: soboon-web-config
-              subPath: config.yml
-#        - name: filebeat
-#          image: "docker.elastic.co/beats/filebeat:7.2.1"
-#          imagePullPolicy: Always
-#          env:
-#            - name: APP
-#              value: "soboon-web"
-#            - name: ELASTICSEARCH_END_POINT
-#              valueFrom:
-#                configMapKeyRef:
-#                  name: elasticsearch-config
-#                  key: endpoint
-#          volumeMounts:
-#            - mountPath: /var/log
-#              name: varlog
-#            - mountPath: /usr/share/filebeat/filebeat.yml
-#              name: filebeat-config
-#              subPath: filebeat.yml
+            - mountPath: /opt/app/soboon/mysql.cnf
+              name: soboon-db-mysql-cnf
+              subPath: mysql.cnf
       volumes:
-        - name: varlog
-          emptyDir: {}
-        - name: filebeat-config
+        - name: soboon-db-mysql-cnf
           configMap:
-            name: filebeat-config
-            defaultMode: 420
-        - name: soboon-web-config
-          configMap:
-            name: soboon-web-config
+            name: soboon-db-mysql-cnf
             defaultMode: 420
       dnsConfig:
         options:

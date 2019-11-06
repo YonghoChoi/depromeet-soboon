@@ -1,16 +1,16 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: "soboon-web"
+  name: "alert-api"
   labels:
     project: "soboon"
 spec:
   selector:
-    app: "soboon-web"
+    app: "alert-api"
   ports:
     - name: "http"
       protocol: "TCP"
-      port: 80
-      targetPort: 80
-      nodePort: 30001
+      port: 8000
+      targetPort: 8000
+      nodePort: 30002
   type: NodePort

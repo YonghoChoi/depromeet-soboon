@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: soboon-db-mysql-cnf
+data:
+  mysql.cnf: |-
+    [client]
+    database = soboon
+    host = soboon-db.default.svc.cluster.local
+    user = Soboon
+    password = soboondepromeet
+

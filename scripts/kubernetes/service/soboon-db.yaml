@@ -1,16 +1,15 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: "soboon-web"
+  name: "soboon-db"
   labels:
     project: "soboon"
 spec:
   selector:
-    app: "soboon-web"
+    app: "soboon-db"
   ports:
     - name: "http"
       protocol: "TCP"
-      port: 80
-      targetPort: 80
-      nodePort: 30001
-  type: NodePort
+      port: 3306
+      targetPort: 3306
+  type: ClusterIP

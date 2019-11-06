@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alert-api
+  labels:
+    project: "soboon"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "alert-api"
+
+  template:
+    metadata:
+      labels:
+        app: "alert-api"
+        project: "soboon"
+    spec:
+      containers:
+        - name: alert-api
+          image: "yonghochoi/soboon-alert-api"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8081
+              name: alert-api
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "3"
