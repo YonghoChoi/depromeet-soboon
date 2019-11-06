@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/YonghoChoi/depromeet-soboon/pkg/fcm"
+	"github.com/YonghoChoi/depromeet-soboon/pkg/log"
 	"github.com/labstack/echo"
 	"net/http"
 )
@@ -21,6 +22,7 @@ func NewResponse() *Response {
 }
 
 func main() {
+	log.Init("debug", "./alert-api.log")
 	e := echo.New()
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "This is soboon alert api")
@@ -42,15 +44,18 @@ func Send(c echo.Context) error {
 	if err := c.Bind(msg); err != nil {
 		res.Result = "500"
 		res.Message = err.Error()
+		log.Error("fcm", "request parameter parsing fail. %v", res)
 		return c.JSON(http.StatusOK, res)
 	}
 
 	if err := fcm.Send(msg); err != nil {
 		res.Result = "500"
 		res.Message = err.Error()
+		log.Error("fcm", "send fail. %v", res)
 		return c.JSON(http.StatusOK, res)
 	}
 
 	res.Data["message"] = msg
+	log.Debug("fcm", "send success. %v", res)
 	return c.JSON(http.StatusOK, res)
 }

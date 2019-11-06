@@ -4,9 +4,8 @@ import (
 	"context"
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/messaging"
-	"fmt"
+	"github.com/YonghoChoi/depromeet-soboon/pkg/log"
 	"google.golang.org/api/option"
-	"log"
 	"os"
 )
 
@@ -38,12 +37,12 @@ func getFCMClient() *Sender {
 		}
 		app, err := firebase.NewApp(ctx, nil, option.WithCredentialsFile(credentials))
 		if err != nil {
-			log.Fatalf(err.Error())
+			log.Fatal("fcm", err.Error())
 		}
 
 		client, err := app.Messaging(ctx)
 		if err != nil {
-			log.Fatalf("error getting Messaging client: %v\n", err)
+			log.Fatal("fcm", "error getting Messaging client: %v", err)
 		}
 
 		gSender = new(Sender)
@@ -70,7 +69,7 @@ func Send(fcmMessage *Message) error {
 			return err
 		}
 		// Response is a message ID string.
-		fmt.Println("Successfully sent message:", response)
+		log.Debug("fcm", "Successfully sent message: %s", response)
 	}
 
 	return nil
