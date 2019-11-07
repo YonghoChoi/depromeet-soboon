@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: make-db.yaml
+  labels:
+    project: "soboon"
+spec:
+  template:
+    spec:
+      containers:
+        - name: make-db
+          image: "yonghochoi/soboon-web"
+          command: ["/bin/sh", "-c", "cd soboon;python3 manage.py makemigrations;python3 manage.py migrate"]
+          volumeMounts:
+            - mountPath: /opt/app/soboon/mysql.cnf
+              name: soboon-db-mysql-cnf
+              subPath: mysql.cnf
+      volumes:
+        - name: soboon-db-mysql-cnf
+          configMap:
+            name: soboon-db-mysql-cnf
+            defaultMode: 420
+      restartPolicy: Never
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "3"
+  backoffLimit: 4

@@ -1,24 +1,16 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: soboon-web
+  name: upload-to-s3
   labels:
     project: "soboon"
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: "soboon-web"
   template:
-    metadata:
-      labels:
-        app: "soboon-web"
-        project: "soboon"
     spec:
       containers:
-        - name: soboon-web
+        - name: upload-to-s3
           image: "yonghochoi/soboon-web"
-          imagePullPolicy: Always
+          command: ["/bin/sh", "-c", "cd soboon;python3 manage.py collectstatic --noinput"]
           ports:
             - containerPort: 80
               name: soboon-web
@@ -26,8 +18,9 @@ spec:
             - mountPath: /opt/app/soboon/mysql.cnf
               name: soboon-db-mysql-cnf
               subPath: mysql.cnf
-            - mountPath: /opt/app/soboon/config/settings.py
+            - mountPath: /opt/app/.config_secret/settings_common.json
               name: soboon-credentials
+              subPath: settings_common.json
               readOnly: true
       volumes:
         - name: soboon-db-mysql-cnf
@@ -37,7 +30,12 @@ spec:
         - name: soboon-credentials
           secret:
             secretName: soboon-credentials
+            items:
+            - key: soboon-credentials
+              path: settings_common.json
+      restartPolicy: Never
       dnsConfig:
         options:
           - name: ndots
             value: "3"
+  backoffLimit: 4
