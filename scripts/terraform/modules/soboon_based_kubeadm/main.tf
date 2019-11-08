@@ -13,7 +13,7 @@ resource "aws_spot_instance_request" "this" {
     volume_size = var.volume_size
   }
 
-  subnet_id                   = var.subnet_ids[0]
+  subnet_id                   = var.public_subnet_ids[0]
   associate_public_ip_address = true
   user_data = local.k8s_userdata
 
@@ -56,7 +56,7 @@ resource "null_resource" "run_command" {
       "cd ~/k8s",
       "dos2unix *",
       "chmod +x *.sh",
-      "./create.sh ${var.environment}",
+//      "./create.sh ${var.environment}",
       "cd ~/nginx",
       "echo '${local.nginx_conf}' | tee ~/nginx/dev.conf",
       "docker-compose up -d",

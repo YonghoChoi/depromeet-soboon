@@ -1,6 +1,6 @@
 variable "project" {
   type = "string"
-  default = "soboon"
+  default = "toy"
 }
 
 variable "environment" {
@@ -15,4 +15,5 @@ locals {
     Terraform = "true"
     Environment = var.environment
   }
+  access_cidr_block = "168.126.184.69/32"
 }

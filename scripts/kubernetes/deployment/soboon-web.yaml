@@ -26,8 +26,9 @@ spec:
             - mountPath: /opt/app/soboon/mysql.cnf
               name: soboon-db-mysql-cnf
               subPath: mysql.cnf
-            - mountPath: /opt/app/soboon/config/settings.py
+            - mountPath: /opt/app/.config_secret/settings_common.json
               name: soboon-credentials
+              subPath: settings_common.json
               readOnly: true
       volumes:
         - name: soboon-db-mysql-cnf
@@ -37,6 +38,9 @@ spec:
         - name: soboon-credentials
           secret:
             secretName: soboon-credentials
+            items:
+              - key: soboon-credentials
+                path: settings_common.json
       dnsConfig:
         options:
           - name: ndots

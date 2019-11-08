@@ -52,7 +52,11 @@ variable "volume_size" {
     type = "string"
 }
 
-variable "subnet_ids" {
+variable "private_subnet_ids" {
+    type = "list"
+}
+
+variable "public_subnet_ids" {
     type = "list"
 }
 
@@ -70,6 +74,14 @@ variable "es_ami_id" {
 }
 
 variable "soboon_ami_id" {
+    type = "string"
+}
+
+variable "vpc_id" {
+    type = "string"
+}
+
+variable "elb_sg" {
     type = "string"
 }
 

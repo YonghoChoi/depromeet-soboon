@@ -16,6 +16,27 @@ module "vpc" {
   tags = merge(local.base_tags, map("Name", local.name))
 }
 
+//module "elb-sg" {
+//  source = "terraform-aws-modules/security-group/aws"
+//
+//  name = local.name
+//  description = "soboon elb security group"
+//  vpc_id = module.vpc.vpc_id
+//
+//  ingress_with_cidr_blocks = [
+//    {
+//      rule = "http-80-tcp"
+//      cidr_blocks = "0.0.0.0/0"
+//    },
+//    {
+//      from_port = 8080
+//      to_port = 8080
+//      protocol = "tcp"
+//      cidr_blocks = "0.0.0.0/0"
+//    }
+//  ]
+//}
+
 module "soboon-sg" {
   source = "terraform-aws-modules/security-group/aws"
 
@@ -26,24 +47,13 @@ module "soboon-sg" {
   ingress_with_cidr_blocks = [
     {
       rule = "ssh-tcp"
-      cidr_blocks = "0.0.0.0/0"
+      cidr_blocks = local.access_cidr_block
     },
     {
-      rule = "http-80-tcp"
-      cidr_blocks = "0.0.0.0/0"
-    },
-    {
-      from_port = 30001
+      from_port = 30000
       to_port = 33000
       protocol = "tcp"
       cidr_blocks = "0.0.0.0/0"
-    }
-  ]
-
-  ingress_with_source_security_group_id = [
-    {
-      rule = "all-all"
-      source_security_group_id = module.soboon-sg.this_security_group_id
     }
   ]
 
@@ -67,14 +77,14 @@ module "elasticstack-sg" {
   ingress_with_cidr_blocks = [
     {
       rule = "ssh-tcp"
-      cidr_blocks = "0.0.0.0/0"
+      cidr_blocks = local.access_cidr_block
     },
     {
       from_port = 5601
       to_port = 5601
       protocol = "tcp"
       description = "Allow kibana"
-      cidr_blocks = "0.0.0.0/0"
+      cidr_blocks = local.access_cidr_block
     }
   ]
 
@@ -82,6 +92,10 @@ module "elasticstack-sg" {
     {
       rule = "elasticsearch-rest-tcp"
       source_security_group_id = module.soboon-sg.this_security_group_id
+//    },
+//    {
+//      rule = "all-all"
+//      source_security_group_id = module.bastion-sg.this_security_group_id
     }
   ]
 
