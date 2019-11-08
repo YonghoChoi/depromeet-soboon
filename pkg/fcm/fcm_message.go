@@ -10,8 +10,11 @@ type IMessage interface {
 	ToJson() (string, error)
 }
 
+// 참고 : https://firebase.google.com/docs/cloud-messaging/send-message?hl=ko
 type Message struct {
 	Receivers []string          `json:"receivers"`
+	Title     string            `json:"title"`
+	Body      string            `json:"body"`
 	Topic     string            `json:"topic"`
 	Data      map[string]string `json:"data"`
 }

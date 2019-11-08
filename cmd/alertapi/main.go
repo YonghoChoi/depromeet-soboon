@@ -4,6 +4,7 @@ import (
 	"github.com/YonghoChoi/depromeet-soboon/pkg/fcm"
 	"github.com/YonghoChoi/depromeet-soboon/pkg/log"
 	"github.com/labstack/echo"
+	"github.com/mitchellh/mapstructure"
 	"net/http"
 )
 
@@ -41,7 +42,17 @@ func Send(c echo.Context) error {
 	msg := new(fcm.Message)
 	res := NewResponse()
 	res.Result = "200"
-	if err := c.Bind(msg); err != nil {
+
+	data := echo.Map{}
+	if err := c.Bind(&data); err != nil {
+		res.Result = "500"
+		res.Message = err.Error()
+		log.Error("fcm", "invalid map type data. %v", res)
+		return c.JSON(http.StatusOK, res)
+	}
+	log.Debug("fcm", "request data : %v", data)
+
+	if err := mapstructure.Decode(data, msg); err != nil {
 		res.Result = "500"
 		res.Message = err.Error()
 		log.Error("fcm", "request parameter parsing fail. %v", res)

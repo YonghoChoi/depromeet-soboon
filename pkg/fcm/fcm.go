@@ -57,9 +57,21 @@ func Send(fcmMessage *Message) error {
 	// topic에 구독하고 있는 구독자들한테 메시지 전송
 	// 참고 : https://firebase.google.com/docs/cloud-messaging/android/send-multiple?authuser=0
 	c := getFCMClient()
+	badge := 42
 	message := &messaging.Message{
-		Data:  fcmMessage.GetData(),
-		Topic: fcmMessage.GetTopic(),
+		Notification: &messaging.Notification{
+			Title: fcmMessage.Title,
+			Body:  fcmMessage.Body,
+		},
+		APNS: &messaging.APNSConfig{
+			Payload: &messaging.APNSPayload{
+				Aps: &messaging.Aps{
+					Badge: &badge,
+				},
+			},
+		},
+		Data: fcmMessage.GetData(),
+		//Topic: fcmMessage.GetTopic(),
 	}
 
 	for _, receiver := range fcmMessage.GetReceivers() {
@@ -69,7 +81,7 @@ func Send(fcmMessage *Message) error {
 			return err
 		}
 		// Response is a message ID string.
-		log.Debug("fcm", "Successfully sent message: %s", response)
+		log.Debug("fcm", "Successfully sent message: %v", response)
 	}
 
 	return nil
